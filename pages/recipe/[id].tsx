@@ -13,6 +13,7 @@ interface RecipeDetailProps {
 }
 
 export default function RecipeDetail({ recipe }: RecipeDetailProps) {
+  console.log(recipe);
   if (!recipe) {
     return <p>Recipe not found!</p>;
   }
@@ -21,7 +22,7 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
     <div>
       <h1>{recipe.title}</h1>
       <Image src={recipe.image} alt={recipe.title} width={200} height={200} />
-      <div dangerouslySetInnerHTML={{ __html: recipe.summary }} />
+      <div />
       <h2>Ingredients</h2>
       <ul>
         {recipe.ingredients.map((ingredient, index) => (
@@ -31,13 +32,10 @@ export default function RecipeDetail({ recipe }: RecipeDetailProps) {
         ))}
       </ul>
       <h2>Instructions</h2>
-      <ol>
-        {recipe.instructions.split("\n").map((line, index) => (
-          <li key={index}>
-            <p>{line}</p>
-          </li>
-        ))}
-      </ol>
+      {/* The dangerouslySetInnerHTML prop is used to render the instructions string as HTML, allowing the <ol> and <li> tags to be displayed correctly in the rendered output. */}
+      {recipe.instructions.split("\n").length > 0 && (
+        <div dangerouslySetInnerHTML={{ __html: recipe.instructions }} />
+      )}
     </div>
   );
 }
