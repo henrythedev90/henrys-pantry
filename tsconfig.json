@@ -27,7 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/lib/mongodb.js",
+    "lib/mongodb.js",
     "pages/api/recipes.js"
   ],
   "exclude": ["node_modules"]
