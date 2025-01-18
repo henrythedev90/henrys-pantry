@@ -55,22 +55,32 @@
 
 ## Setup and Installation
 
-Prerequisites 1. Node.js installed on your system. 2. A MongoDB instance (Atlas or local). 3. Spoonacular API key.
+### Prerequisites
 
-Steps 1. Clone the repository:
+1. Node.js installed on your system.
+2. A MongoDB instance (Atlas or local).
+3. Spoonacular API key.
+
+### Steps
+
+1. Clone the repository:
+
 `git clone https://github.com/your-username/pantry-to-plate.git`
 `cd pantry-to-plate`
 
 2. Install dependencies:
-   `npm install`
+
+`npm install`
 
 3. Create a .env.local file in the root directory and add the following:
-   `MONGODB_URI=<your-mongodb-connection-string>`
-   `MONGODB_DB=<your-database-name>`
-   `SPOONACULAR_API_KEY=<your-spoonacular-api-key>`
+
+`MONGODB_URI=<your-mongodb-connection-string>`
+`MONGODB_DB=<your-database-name>`
+`SPOONACULAR_API_KEY=<your-spoonacular-api-key>`
 
 4. Run the development server:
-   `npm run dev`
+
+`npm run dev`
 
 5. Open http://localhost:3000 to view it in the browser.
 
