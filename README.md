@@ -66,6 +66,7 @@
 1. Clone the repository:
 
 `git clone https://github.com/your-username/pantry-to-plate.git`
+
 `cd pantry-to-plate`
 
 2. Install dependencies:
@@ -75,7 +76,9 @@
 3. Create a .env.local file in the root directory and add the following:
 
 `MONGODB_URI=<your-mongodb-connection-string>`
+
 `MONGODB_DB=<your-database-name>`
+
 `SPOONACULAR_API_KEY=<your-spoonacular-api-key>`
 
 4. Run the development server:
