@@ -12,9 +12,7 @@ export default async function handler(req, res) {
       const maxResults = req.query.maxResults || 10;
 
       if (!ingredients) {
-        return res
-          .status(400)
-          .json({ message: "Ingredients query parameter is required." });
+        return res.status(400).json({ message: "Please add ingredients." });
       }
 
       const spoonacularUrl = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients}&number=${maxResults}&apiKey=${SPOONACULAR_API_KEY}`;
@@ -32,6 +30,7 @@ export default async function handler(req, res) {
       }
 
       const recipes = await spoonacularResponse.json();
+
       // console.log("Recipes fetched:", recipes); // Log the fetched recipes
 
       // Optionally cache recipes in MongoDB
