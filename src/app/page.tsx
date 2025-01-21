@@ -1,10 +1,11 @@
 import RecipeSearch from "./components/RecipeSearch";
+import Login from "./components/LoginForm/LoginForm";
 export default function Home() {
-  const pantryItems = ["tomato", "cheese", "basil"];
   return (
     <div>
       <h1>Welcome to the Recipe Finder</h1>
-      <RecipeSearch pantryItems={pantryItems} />
+      <Login />
+      <RecipeSearch />
     </div>
   );
 }
