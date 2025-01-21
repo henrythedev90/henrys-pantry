@@ -3,24 +3,26 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export function authenticate(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  next: Function
+export function authenticateMiddleWare(
+  handler: (req: NextApiRequest, res: NextApiResponse) => void
 ) {
-  const authHeader = req.headers.authorization;
+  return async (req: NextApiRequest, res: NextApiResponse) => {
+    const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized: Missing token" });
+    }
 
-  const token = authHeader.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    (req as any).user = decoded; // Add user info to the request object
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token." });
-  }
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      (req as any).user = decoded; // Attach user info to the request object
+      return handler(req, res); // Pass req and res to the original handler
+    } catch (err) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: Invalid or expired token" });
+    }
+  };
 }
