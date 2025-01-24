@@ -3,6 +3,13 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import clientPromise from "../../../src/app/lib/mongodb";
 
+async function verifyUser(email: string, db: any, res: NextApiResponse) {
+  const existingUser = await db.collection("users").findOne({ email });
+  if (!existingUser) {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -13,7 +20,11 @@ export default async function handler(
 
   const { email, password } = req.body;
 
-  if (!email || !password) {
+  // Check if the request is for user verification or login
+  if (req.body.action === "verify") {
+    const client = await clientPromise;
+    return verifyUser(email, client.db(process.env.MONGODB_DB), res);
+  } else if (!email || !password) {
     return res.status(400).json({ message: "Email and password are required" });
   }
 
@@ -42,7 +53,7 @@ export default async function handler(
     );
 
     // Send the token back to the client
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({ message: "Congrats! Login successful", token });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Internal Server Error" });
