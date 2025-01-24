@@ -41,7 +41,6 @@ async function createUser(
 
     // Insert user into the database
     await db.collection("users").insertOne(newUser);
-
     res.status(201).json({ message: "User created successfully!" });
   } catch (error) {
     console.error("Error creating user:", error);
