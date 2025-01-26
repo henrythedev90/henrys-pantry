@@ -1,15 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../src/app/lib/mongodb";
 import { ObjectId } from "mongodb";
-
+import { authorizeOwnResource } from "../../../middleware/authorizeOwnResourse";
 // GET	/api/users/:id	Retrieve a single user
 // PUT/PATCH	/api/users/:id	Update user details
 // DELETE	/api/users/:id	Delete a user
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
   const { id } = req.query;
@@ -56,7 +53,10 @@ export default async function handler(
       }
       res
         .status(200)
-        .json({ message: "User updated successfully!", updatedUser: result });
+        .json({
+          message: "User updated successfully!",
+          updatedUser: { ...result, ...updateFields },
+        });
     } catch (error) {
       console.error("Error updating user:", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -78,3 +78,5 @@ export default async function handler(
     res.status(405).json({ message: "Method Not Allowed" });
   }
 }
+
+export default authorizeOwnResource(handler);
