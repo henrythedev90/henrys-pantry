@@ -5,6 +5,9 @@ import jwt from "jsonwebtoken";
 interface DecodedToken {
   userId: string;
   email: string;
+  iat: number;
+  exp: number;
+
   // Add other properties as per your token's structure
 }
 
@@ -32,6 +35,7 @@ export function authenticate(
 
       // Verify the token and decode its payload
       const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+      console.log("decoded", decoded);
 
       // Attach the decoded user information to the request object
       (req as any).user = decoded;
