@@ -21,6 +21,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const db = client.db(process.env.MONGODB_DB);
 
     // Get the authenticated user (assuming `authenticate` middleware adds user info to req)
+
     const userId = (req as any).user.id;
 
     // Find the user by ID
@@ -34,7 +35,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    console.log("isMatch", isMatch);
     if (!isMatch) {
       return res
         .status(401)
