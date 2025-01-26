@@ -3,6 +3,8 @@ import clientPromise from "../../../src/app/lib/mongodb";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+// POST	/api/users/login	Log in a user
+
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 export default async function handler(
@@ -33,7 +35,9 @@ export default async function handler(
     const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.status(200).json({ token });
+    res
+      .status(200)
+      .json({ token, login: "success", message: "Login successful!" });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal Server Error" });

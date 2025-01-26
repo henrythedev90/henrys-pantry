@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../src/app/lib/mongodb";
 import { ObjectId } from "mongodb";
 
+// GET	/api/users/:id	Retrieve a single user
+// PUT/PATCH	/api/users/:id	Update user details
+// DELETE	/api/users/:id	Delete a user
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -31,19 +35,28 @@ export default async function handler(
     }
   } else if (req.method === "PUT") {
     const { name, email } = req.body;
+    const updateFields: any = { updatedAt: new Date() };
+
+    if (name) updateFields.name = name;
+    if (email) updateFields.email = email;
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
 
     try {
-      const result = await db
-        .collection("users")
-        .updateOne(
-          { _id: userId },
-          { $set: { name, email, updatedAt: new Date() } }
-        );
+      const result = await db.collection("users").updateOne(
+        { _id: userId },
+        {
+          $set: { ...updateFields, updatedAt: new Date() },
+        }
+      );
 
       if (result.matchedCount === 0) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ message: "User updated successfully!" });
+      res
+        .status(200)
+        .json({ message: "User updated successfully!", updatedUser: result });
     } catch (error) {
       console.error("Error updating user:", error);
       res.status(500).json({ message: "Internal Server Error" });
@@ -54,7 +67,9 @@ export default async function handler(
       if (result.deletedCount === 0) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ message: "User deleted successfully!" });
+      res
+        .status(200)
+        .json({ message: "User deleted successfully!", deletedUser: result });
     } catch (error) {
       console.error("Error deleting user:", error);
       res.status(500).json({ message: "Internal Server Error" });

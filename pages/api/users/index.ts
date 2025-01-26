@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../src/app/lib/mongodb";
 import bcrypt from "bcryptjs";
 
+// POST	/api/users	Create a new user
+// GET	/api/users	Retrieve all users (admin)
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -49,7 +52,9 @@ export default async function handler(
       };
 
       await db.collection("users").insertOne(newUser);
-      res.status(201).json({ message: "User created successfully!" });
+      res
+        .status(201)
+        .json({ message: "User created successfully!", newUser: newUser });
     } catch (error) {
       console.error("Error creating user:", error);
       res.status(500).json({ message: "Internal Server Error" });
