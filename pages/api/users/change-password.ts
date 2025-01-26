@@ -2,13 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
 import clientPromise from "../../../src/app/lib/mongodb";
 import { authenticate } from "../../../middleware/authenticate"; // Assuming you already have middleware
-
+import { ObjectId } from "mongodb";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
-  //   console.log("req", req);
-  console.log("res", res);
 
   const { currentPassword, newPassword } = req.body;
 
@@ -26,7 +24,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const userId = (req as any).user.id;
 
     // Find the user by ID
-    const user = await db.collection("users").findOne({ _id: userId });
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userId) });
     console.log("user", user);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -34,6 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
+    console.log("isMatch", isMatch);
     if (!isMatch) {
       return res
         .status(401)
@@ -46,7 +47,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Update the user's password
     await db
       .collection("users")
-      .updateOne({ _id: userId }, { $set: { password: hashedPassword } });
+      .updateOne(
+        { _id: new ObjectId(userId) },
+        { $set: { password: hashedPassword } }
+      );
 
     res.status(200).json({ message: "Password updated successfully!" });
   } catch (error) {
@@ -55,16 +59,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default authenticate(handler); // Use your authentication middleware
-
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse
-// ) {
-//   if (req.method === "POST") {
-//     return res
-//       .status(200)
-//       .json({ message: "Password change route is working" });
-//   }
-//   return res.status(404).json({ message: "Route not found" });
-// }
+export default authenticate(handler);

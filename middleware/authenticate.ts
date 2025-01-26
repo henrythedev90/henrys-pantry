@@ -1,6 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 
+// Define the shape of the decoded token for type safety
+interface DecodedToken {
+  userId: string;
+  email: string;
+  iat: number;
+  exp: number;
+
+  // Add other properties as per your token's structure
+}
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export function authenticate(
@@ -18,11 +28,14 @@ export function authenticate(
     const token = authHeader.split(" ")[1];
 
     try {
-      // Verify the token and decode its payload
+      // Ensure JWT_SECRET is defined
       if (!JWT_SECRET) {
-        throw new Error("JWT_SECRET is not defined");
+        throw new Error("JWT_SECRET is not defined in environment variables");
       }
-      const decoded = jwt.verify(token, JWT_SECRET);
+
+      // Verify the token and decode its payload
+      const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+      console.log("decoded", decoded);
 
       // Attach the decoded user information to the request object
       (req as any).user = decoded;
@@ -31,6 +44,12 @@ export function authenticate(
       return handler(req, res);
     } catch (err) {
       console.error("JWT verification failed:", err);
+
+      // Add more specific error handling
+      if (err instanceof jwt.TokenExpiredError) {
+        return res.status(401).json({ message: "Token has expired" });
+      }
+
       return res
         .status(401)
         .json({ message: "Unauthorized: Invalid or expired token" });
