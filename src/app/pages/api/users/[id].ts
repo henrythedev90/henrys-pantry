@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import clientPromise from "../../../src/app/lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { authorizeOwnResource } from "../../../middleware/authorizeOwnResourse";
 // GET	/api/users/:id	Retrieve a single user

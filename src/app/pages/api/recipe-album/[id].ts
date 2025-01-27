@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authenticate } from "../../../middleware/authenticate";
-import clientPromise from "../../../src/app/lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
 async function recipeAlbumHandler(req: NextApiRequest, res: NextApiResponse) {

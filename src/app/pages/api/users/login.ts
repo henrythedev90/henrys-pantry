@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import clientPromise from "../../../src/app/lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 

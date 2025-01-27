@@ -1,4 +1,4 @@
-import clientPromise from "../../src/app/lib/mongodb"; // Updated import path to use alias
+import clientPromise from "../../lib/mongodb"; // Updated import path to use alias
 
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 

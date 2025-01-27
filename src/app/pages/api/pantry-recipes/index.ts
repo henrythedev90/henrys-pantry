@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authenticate } from "../../../middleware/authenticate";
-import clientPromise from "../../../src/app/lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
