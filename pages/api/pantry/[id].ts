@@ -97,7 +97,6 @@ async function pantryItemHandler(req: NextApiRequest, res: NextApiResponse) {
       try {
         const result = await db.collection("users").updateOne(
           {
-            _id: new ObjectId(userId as string),
             "pantry._id": new ObjectId(id as string),
           },
           {

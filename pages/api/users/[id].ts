@@ -33,13 +33,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } else if (req.method === "PUT") {
     const { name, email } = req.body;
     const updateFields: any = { updatedAt: new Date() };
-
     if (name) updateFields.name = name;
     if (email) updateFields.email = email;
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).json({ message: "No valid fields to update" });
     }
-
     try {
       const result = await db.collection("users").updateOne(
         { _id: userId },
@@ -47,16 +45,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           $set: { ...updateFields, updatedAt: new Date() },
         }
       );
-
       if (result.matchedCount === 0) {
         return res.status(404).json({ message: "User not found" });
       }
-      res
-        .status(200)
-        .json({
-          message: "User updated successfully!",
-          updatedUser: { ...result, ...updateFields },
-        });
+      res.status(200).json({
+        message: "User updated successfully!",
+        updatedUser: { ...result, ...updateFields },
+      });
     } catch (error) {
       console.error("Error updating user:", error);
       res.status(500).json({ message: "Internal Server Error" });
