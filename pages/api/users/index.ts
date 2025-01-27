@@ -42,9 +42,9 @@ export default async function handler(
 
       const hashedPassword = await bcrypt.hash(password, 12);
       const newUser = {
-        email,
-        password: hashedPassword,
-        name: name || "",
+        email: email as string,
+        password: hashedPassword as string,
+        name: (name as string) || "",
         recipes: [],
         pantry: [],
         createdAt: new Date(),
