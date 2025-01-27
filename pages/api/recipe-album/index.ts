@@ -32,6 +32,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // Build the recipe object
         const recipe = {
+          _id: new ObjectId(),
           userId: new ObjectId(userId as string),
           originalId: recipeData.id,
           title: recipeData.title,
@@ -71,10 +72,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           { _id: new ObjectId(userId as string) },
           {
             $push: {
-              recipes: {
-                $each: [recipe],
-                $position: 0,
-              },
+              recipes: recipe,
             },
             $set: { updatedAt: new Date() },
           },
