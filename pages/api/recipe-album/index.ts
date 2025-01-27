@@ -8,7 +8,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
   const userId = (req as any).user.id;
-  const { id } = req.query; // Recipe ID from the query
+  const { id } = req.query;
 
   switch (req.method) {
     case "POST":
@@ -52,8 +52,14 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         };
 
         // Check if the user exists
-        console.log("userId:", userId);
-        console.log("userId as ObjectId:", new ObjectId(userId as string));
+        const isIdValid = await db.collection("users").findOne({
+          _id: new ObjectId(userId as string),
+        });
+        console.log("isIdValid:", isIdValid);
+
+        if (!isIdValid) {
+          return res.status(404).json({ message: "User not found." });
+        }
 
         // Check if the recipe is already in the user's album
         const recipeExists = await db.collection("users").findOne({
@@ -105,7 +111,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         res.status(200).json({
-          message: "This route is working!",
+          message: "Recipes fetched successfully",
           recipes: userRecipes.recipes,
         });
       } catch (err) {

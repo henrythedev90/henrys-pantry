@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -15,24 +16,13 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const response = await fetch("/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post("/api/users/login", {
+        email,
+        password,
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // On successful login, store the token (could be in localStorage, cookies, etc.)
-        localStorage.setItem("token", data.token);
-        router.push("/dashboard");
-        alert("Login successful!");
-      } else {
-        setError(data.message || "Something went wrong.");
-      }
+      localStorage.setItem("token", response.data.token);
+      router.push("/dashboard");
+      console.log("Login successful!");
     } catch (error) {
       console.error("Error during login:", error);
       setError("Error logging in. Please try again later.");
