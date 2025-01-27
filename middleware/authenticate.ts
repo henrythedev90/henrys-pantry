@@ -26,7 +26,6 @@ export function authenticate(
 
     // Extract the token from the Authorization header
     const token = authHeader.split(" ")[1];
-
     try {
       // Ensure JWT_SECRET is defined
       if (!JWT_SECRET) {
@@ -38,7 +37,7 @@ export function authenticate(
 
       // Attach the decoded user information to the request object
       (req as any).user = decoded;
-
+      console.log("decoded:", decoded);
       // Call the original handler with the request and response objects
       return handler(req, res);
     } catch (err) {

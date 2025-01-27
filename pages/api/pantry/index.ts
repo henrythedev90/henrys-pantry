@@ -2,6 +2,17 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { authenticate } from "../../../middleware/authenticate";
 import clientPromise from "../../../src/app/lib/mongodb";
 import { ObjectId } from "mongodb";
+
+interface PantryItem {
+  _id: ObjectId;
+  userId: ObjectId;
+  name: string;
+  quantity: number;
+  unit: string;
+  expirationDate: Date | null;
+  createdAt: Date;
+}
+
 async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
@@ -29,7 +40,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
     case "POST":
       try {
         const { name, quantity, unit, expirationDate } = req.body;
-        const newItem = {
+        const newItem: PantryItem = {
           _id: new ObjectId(),
           userId: new ObjectId(userId as string),
           name: name as string,

@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/lib/mongodb.ts",
-    "pages/api/recipes.js"
+    "pages/api/recipes.js",
+    "pages/api/recipe-album"
   ],
   "exclude": ["node_modules"]
 }
