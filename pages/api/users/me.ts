@@ -13,7 +13,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const user = await db
         .collection("users")
         .findOne(
-          { _id: new ObjectId(userId) },
+          { _id: new ObjectId(userId as string) },
           { projection: { password: 0 } }
         );
       res

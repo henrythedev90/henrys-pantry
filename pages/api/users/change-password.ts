@@ -48,7 +48,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     await db
       .collection("users")
       .updateOne(
-        { _id: new ObjectId(userId) },
+        { _id: new ObjectId(userId as string) },
         { $set: { password: hashedPassword } }
       );
 
