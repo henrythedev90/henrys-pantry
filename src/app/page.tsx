@@ -1,4 +1,4 @@
-import Login from "./users/login";
+import Login from "../../pages/users/login";
 export default function Home() {
   return (
     <div>

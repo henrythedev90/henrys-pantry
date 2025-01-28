@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { authenticate } from "../../../middleware/authenticate";
-import clientPromise from "../../../src/app/lib/mongodb";
+import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
 interface PantryItem {
@@ -17,7 +17,6 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
   const userId = (req as any).user.id;
-  console.log(userId, "is this working?");
 
   if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
@@ -58,7 +57,6 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
           },
           { upsert: true } // Create the document if it doesn't exist
         );
-        console.log("result:", result);
         if (result.modifiedCount === 0) {
           return res
             .status(404)

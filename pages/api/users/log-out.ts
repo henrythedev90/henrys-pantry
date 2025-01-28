@@ -11,17 +11,14 @@ export default async function handler(
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  console.log("req.headers:", req.headers);
-
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  console.log("token:", token);
+
   try {
     const user = jwt.verify(token, JWT_SECRET);
     if (user) {
-      console.log("user:", user);
       res.status(200).json({ message: "Logged out successfully" });
     }
   } catch (error) {

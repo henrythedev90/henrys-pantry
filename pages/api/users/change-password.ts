@@ -27,8 +27,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Find the user by ID
     const user = await db
       .collection("users")
-      .findOne({ _id: new ObjectId(userId) });
-    console.log("user", user);
+      .findOne({ _id: new ObjectId(userId as string) });
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }

@@ -1,13 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import clientPromise from "../../../lib/mongodb";
 import { authenticate } from "../../../middleware/authenticate";
 
 export default authenticate(
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const client = await clientPromise;
-
     const { id } = req.query;
-    console.log(id, "id");
     const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
     switch (req.method) {
       case "GET":

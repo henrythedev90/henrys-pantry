@@ -55,7 +55,6 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         const isIdValid = await db.collection("users").findOne({
           _id: new ObjectId(userId as string),
         });
-        console.log("isIdValid:", isIdValid);
 
         if (!isIdValid) {
           return res.status(404).json({ message: "User not found." });
@@ -84,8 +83,6 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           { upsert: true }
         );
-        console.log("result:", result);
-
         res
           .status(201)
           .json({ message: "Recipe added to your album.", result });

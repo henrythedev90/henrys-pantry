@@ -31,8 +31,6 @@ export default async function handler(req, res) {
 
       const recipes = await spoonacularResponse.json();
 
-      // console.log("Recipes fetched:", recipes); // Log the fetched recipes
-
       // Optionally cache recipes in MongoDB
       // This refers to the MongoDB collection where the recipes will be stored.
       await db.collection("cachedRecipes").insertMany(

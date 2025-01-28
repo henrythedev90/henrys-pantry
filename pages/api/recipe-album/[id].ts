@@ -8,7 +8,7 @@ async function recipeAlbumHandler(req: NextApiRequest, res: NextApiResponse) {
   const db = client.db(process.env.MONGODB_DB);
   const userId = (req as any).user.id;
   const { id } = req.query;
-  console.log("id:", id);
+
   switch (req.method) {
     case "DELETE":
       try {
