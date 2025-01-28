@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcryptjs";
-import clientPromise from "../../../lib/mongodb";
-import { authenticate } from "../../../middleware/authenticate"; // Assuming you already have middleware
+import clientPromise from "../../../../lib/mongodb";
+import { authenticate } from "../../../../middleware/authenticate"; // Assuming you already have middleware
 import { ObjectId } from "mongodb";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {

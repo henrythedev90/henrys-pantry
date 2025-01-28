@@ -21,8 +21,8 @@ export default function Login() {
         password,
       });
       localStorage.setItem("token", response.data.token);
-      router.push("/dashboard");
       console.log("Login successful!");
+      router.push(`/users/${response.data.userId}`);
     } catch (error) {
       console.error("Error during login:", error);
       setError("Error logging in. Please try again later.");
