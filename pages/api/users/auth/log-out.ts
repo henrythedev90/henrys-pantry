@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
+import { authenticate } from "../../../../middleware/authenticate";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
@@ -28,6 +26,8 @@ export default async function handler(
 
   res.status(200).json({ message: "Logged out successfully" });
 }
+
+export default authenticate(handler);
 
 // Example React component for logging out
 // import React from 'react';

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import clientPromise from "../../../lib/mongodb";
+import clientPromise from "../../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -37,7 +37,12 @@ export default async function handler(
     });
     res
       .status(200)
-      .json({ token, login: "success", message: "Login successful!" });
+      .json({
+        token,
+        userId: user._id,
+        login: "success",
+        message: "Login successful!",
+      });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal Server Error" });

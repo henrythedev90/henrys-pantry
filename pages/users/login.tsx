@@ -16,13 +16,16 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await axios.post("/api/users/login", {
-        email,
-        password,
-      });
-      localStorage.setItem("token", response.data.token);
-      console.log("Login successful!");
-      router.push(`/users/${response.data.userId}`);
+      const response = await axios
+        .post("/api/users/auth/login", {
+          email,
+          password,
+        })
+        .then((response) => {
+          const { token, userId } = response.data;
+          localStorage.setItem("token", token);
+          router.push(`/users/${userId as string}`);
+        });
     } catch (error) {
       console.error("Error during login:", error);
       setError("Error logging in. Please try again later.");

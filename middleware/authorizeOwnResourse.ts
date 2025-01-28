@@ -30,6 +30,7 @@ export function authorizeOwnResource(
       }
 
       const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+      console.log(decoded, "this is the decoded token");
 
       // Extract the `id` from the URL and `userId` from the token
       const { id } = req.query;
