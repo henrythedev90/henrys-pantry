@@ -83,6 +83,16 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           { upsert: true }
         );
+
+        await db.collection("cachedRecipes").updateOne(
+          { _id: recipe.originalId },
+          {
+            $set: { ...recipe, fetchedAt: new Date() },
+            $inc: { count: 1 },
+          },
+          { upsert: true }
+        );
+
         res
           .status(201)
           .json({ message: "Recipe added to your album.", result });
