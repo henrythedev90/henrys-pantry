@@ -26,7 +26,7 @@ const SignUp = () => {
         setError("Passwords do not match");
         return;
       }
-      const res = await axios.post(
+      await axios.post(
         "/api/users",
         {
           name,
