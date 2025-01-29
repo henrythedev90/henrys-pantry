@@ -26,7 +26,7 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     // Create a new user
-    const { email, password, name } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
     if (!email || !password) {
       return res
@@ -44,7 +44,8 @@ export default async function handler(
       const newUser = {
         email: email as string,
         password: hashedPassword as string,
-        name: (name as string) || "",
+        firstName: (firstName as string) || "",
+        lastName: (lastName as string) || "",
         recipes: [],
         pantry: [],
         createdAt: new Date(),

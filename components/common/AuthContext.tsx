@@ -7,6 +7,7 @@ interface AuthContextType {
   setToken: (token: string | null) => void;
   logout: () => void;
   login: (newToken: string, userId: string) => void;
+  isLogginOut: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -15,6 +16,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -33,8 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  console.log(token, " in the auth provider this is the token");
-
   const logout = async () => {
     try {
       await fetch("/api/users/auth/log-out", {
@@ -43,8 +43,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      localStorage.removeItem("token");
       setToken(null);
+      setIsLoggingOut(true);
+      localStorage.removeItem("token");
       router.push("/users/login");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -52,7 +53,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, setToken, logout, login }}>
+    <AuthContext.Provider
+      value={{ token, setToken, logout, login, isLogginOut: isLoggingOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

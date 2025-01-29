@@ -1,0 +1,170 @@
+@media screen and (max-width: 768px) {
+  .login_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    margin: 0 auto;
+    max-height: 667px;
+  }
+  .login_container_title {
+    padding: 1%;
+    max-height: 667px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .login_container_title_text {
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .login_container_title_text h1 {
+    font-size: 24px;
+    text-align: center;
+  }
+  .login_container_title_text ul {
+    list-style-type: none;
+    text-align: start;
+    padding-left: 0;
+  }
+  .login_container_title_text ul li {
+    padding: 4px;
+  }
+  .login_container_title_buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .login_container_title_buttons_container {
+    padding: 1%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .login_form_container {
+    padding: 5px;
+    max-height: 667px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 300px;
+  }
+  .login_form_container h1 {
+    font-size: 24px;
+    text-align: center;
+  }
+  .login_form_container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+  }
+  .login_form_container form div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    width: 100%;
+  }
+  .login_form_container form div label {
+    padding: 4px;
+    font-size: 16px;
+    text-align: start;
+  }
+  .login_form_container_button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    font-size: 16px;
+    text-align: center;
+    width: 100%;
+  }
+  .login_form_container form div input {
+    padding: 4px;
+    font-size: 16px;
+    text-align: start;
+    width: 100%;
+  }
+  .login_container_signup_container {
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    column-gap: 4px;
+    align-items: center;
+    text-align: center;
+  }
+  .login_container_signup_container button {
+    font-size: 16px;
+    text-align: center;
+  }
+}
+@media screen and (min-width: 770px) {
+  .login_container {
+    padding: 20px; /* Adjusted padding for smaller screens */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid red;
+  }
+  .login_form_container {
+    /* padding: 20px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid green;
+  }
+
+  .login_container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid blue;
+    padding: 100px;
+    align-items: center;
+  }
+
+  .login_container form div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid green;
+    padding: 20px;
+    align-items: start;
+  }
+
+  .login_container form label {
+    border: 1px solid yellow;
+    padding: 20px;
+    align-items: center;
+  }
+
+  .login_container form input {
+    border: 1px solid purple;
+    padding: 20px;
+    align-items: center;
+    font-size: 16px;
+  }
+
+  .login_container_welcome_container {
+    border: 1px solid orange;
+    padding: 20px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+}
