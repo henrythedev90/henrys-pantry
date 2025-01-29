@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthContext";
 export default function ProtectedRoute({
@@ -8,13 +8,28 @@ export default function ProtectedRoute({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { token } = useAuth();
+  const { token, logout, isLogginOut } = useAuth();
+
   useEffect(() => {
-    if (!token) {
+    const handleLogout = () => {
+      logout();
       router.push("/users/login");
+    };
+
+    window.addEventListener("logout", handleLogout);
+
+    return () => {
+      window.removeEventListener("logout", handleLogout);
+    };
+  }, [router, logout]);
+
+  useEffect(() => {
+    if (!token && !isLogginOut) {
+      router.push("/not-found");
     }
-  }, [router, token]);
-  if (!token) {
+  }, [router, token, isLogginOut]);
+
+  if (!token && !isLogginOut) {
     return null;
   }
   return <>{children}</>;

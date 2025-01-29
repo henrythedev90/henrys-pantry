@@ -31,9 +31,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       res.status(500).json({ message: "Internal Server Error" });
     }
   } else if (req.method === "PUT") {
-    const { name, email } = req.body;
+    const { firstName, lastName, email } = req.body;
     const updateFields: any = { updatedAt: new Date() };
-    if (name) updateFields.name = name;
+    if (firstName) updateFields.firstName = firstName;
+    if (lastName) updateFields.lastName = lastName;
     if (email) updateFields.email = email;
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).json({ message: "No valid fields to update" });

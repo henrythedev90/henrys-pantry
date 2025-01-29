@@ -3,21 +3,27 @@ import { useState } from "react";
 import { useAuth } from "../../components/common/AuthContext";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import classes from "./login.module.css";
+import classes from "../style/login.module.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+  const handleChanges = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError(null);
 
@@ -32,8 +38,8 @@ export default function Login() {
         .post(
           "/api/users/auth/login",
           {
-            email,
-            password,
+            email: values.email,
+            password: values.password,
           },
           {
             headers: headers,
@@ -79,8 +85,9 @@ export default function Login() {
               <label>Email:</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={values.email}
+                onChange={handleChanges}
                 required
               />
             </div>
@@ -88,8 +95,9 @@ export default function Login() {
               <label>Password:</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={values.password}
+                onChange={handleChanges}
                 required
               />
             </div>
