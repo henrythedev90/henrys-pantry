@@ -35,8 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  console.log(token, " in the auth provider this is the token");
-
   const logout = async () => {
     try {
       await fetch("/api/users/auth/log-out", {

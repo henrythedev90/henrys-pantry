@@ -24,7 +24,7 @@ export default function NotFound() {
           <button type="button" onClick={handleRedirect}>
             Go to User Page
           </button>
-          <div>Not Found</div>
+          <div>You are not authorize to visit this page</div>
         </div>
       </Container>
     </div>

@@ -4,6 +4,8 @@ import classes from "./Header.module.css";
 import Link from "next/link";
 import { NAV_LINK } from "../data/navLinks";
 import { useAuth } from "../common/AuthContext";
+import jwt from "jsonwebtoken";
+
 const Header = () => {
   {
     /**useRef is null at start, you need to check node's existence before using it.*/
@@ -30,13 +32,20 @@ const Header = () => {
       menuRef.current.classList.toggle(`${classes.menu_active}`);
     }
   };
+
+  const decode = token ? jwt.decode(token) : null;
+
   return token ? (
     <header className={classes.header} ref={headerRef}>
       <Container>
         <div className={classes.nav_wrapper}>
           {/** potential logo will go here */}
           <div className={classes.logo}>
-            <Link href={"/"}>
+            <Link
+              href={`/users/${
+                (decode && typeof decode !== "string" && decode.id) || ""
+              }`}
+            >
               <h1>
                 <span>H</span>enry's Pantry
                 <span>logged in</span>
