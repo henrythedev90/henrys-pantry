@@ -5,7 +5,8 @@ import Container from "../../components/Container";
 import Button from "../../components/Button";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import classes from "../style/login.module.css";
+import styles from "./styles/login.module.css"; // Correctly importing CSS module
+import Link from "next/link";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -59,56 +60,73 @@ export default function Login() {
   };
 
   return (
-    <div className={classes.login_container}>
-      <div className={classes.login_container_welcome_container}>
-        <Container>
-          <h1>Welcome to the Pantry App</h1>
-          <p>Simplify your pantry management with our easy-to-use app.</p>
-          <p>Recipes with ingredients you already have</p>
-        </Container>
-      </div>
-      <div>
-        <Container>
-          <h1>Button to sign up</h1>
-          <Button
-            text="Sign up"
-            onClick={() => {
-              router.push("/users/sign-up");
-            }}
-          />
-        </Container>
-      </div>
-      <div className={classes.login_container_form_container}>
-        <Container>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label>Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={values.email}
-                onChange={handleChanges}
-                required
-              />
+    <div>
+      <Container>
+        <div className={styles.login_container}>
+          <div className={styles.login_container_title}>
+            <div className={styles.login_container_title_text}>
+              <h1>Welcome to the Pantry App</h1>
+              <ul>
+                <li>
+                  Simplify your pantry management with our easy-to-use app.
+                </li>
+                <li>Recipes with ingredients you already have</li>
+              </ul>
             </div>
-            <div>
-              <label>Password:</label>
-              <input
-                type="password"
-                name="password"
-                value={values.password}
-                onChange={handleChanges}
-                required
-              />
-            </div>
-            <button type="submit" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </button>
+          </div>
+          <div className={styles.login_container_title_buttons}>
+            <div className={styles.login_form_container}>
+              <h1>Login</h1>
+              <form onSubmit={handleSubmit}>
+                <div>
+                  <label>Email:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={values.email}
+                    onChange={handleChanges}
+                    required
+                  />
+                </div>
+                <div>
+                  <label>Password:</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={values.password}
+                    onChange={handleChanges}
+                    required
+                  />
+                </div>
+                <div className={styles.login_form_container_button}>
+                  <button type="submit" disabled={loading}>
+                    {loading ? "Logging in..." : "Login"}
+                  </button>
+                </div>
 
-            {error && <div style={{ color: "red" }}>{error}</div>}
-          </form>
-        </Container>
-      </div>
+                {error && <div style={{ color: "red" }}>{error}</div>}
+              </form>
+            </div>
+            <div className={styles.login_container_signup_container}>
+              <h4>New to the app?</h4>
+              <div className={styles.login_container_title_buttons_container}>
+                <Button
+                  text="Sign up"
+                  onClick={() => {
+                    router.push("/users/sign-up");
+                  }}
+                />
+                <Button
+                  text="Learn more about founder"
+                  onClick={() => {
+                    window.open("https://henry-nunez.com/", "_blank");
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
     </div>
   );
 }

@@ -2,7 +2,6 @@ import React from "react";
 import jwt from "jsonwebtoken";
 import Container from "../components/Container";
 import { useRouter } from "next/router";
-import classes from "./style/not-found.module.css";
 
 export default function NotFound() {
   const token = localStorage.getItem("token");
@@ -18,15 +17,28 @@ export default function NotFound() {
   };
 
   return (
-    <div>
-      <Container>
-        <div className={classes.notFoundContainer}>
+    <Container>
+      <div
+        style={{
+          padding: "200px",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "1px solid red",
+          marginTop: "140px",
+        }}
+      >
+        <div>
           <button type="button" onClick={handleRedirect}>
             Go to User Page
           </button>
-          <div>You are not authorize to visit this page</div>
         </div>
-      </Container>
-    </div>
+        <div>
+          <p>You are not authorized to visit this page</p>
+        </div>
+      </div>
+    </Container>
   );
 }
