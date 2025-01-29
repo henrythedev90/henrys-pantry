@@ -44,19 +44,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           (a: any, b: any) => b.missedIngredientCount + a.missedIngredientCount
         );
 
-        await Promise.all(
-          sortedRecipes.map((recipe: any) => {
-            db.collection("cachedRecipes").updateOne(
-              { _id: recipe._id },
-              {
-                $set: { ...recipe, fetchedAt: new Date() },
-                $inc: { count: 1 },
-              },
-              { upsert: true }
-            );
-          })
-        );
-
         res.status(200).json(sortedRecipes);
       } catch (error) {
         console.error("Error fetching recipes:", error);
