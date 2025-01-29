@@ -13,6 +13,7 @@ interface DecodedToken {
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+let blacklistedTokens = new Set<string>();
 export function authenticate(
   handler: (req: NextApiRequest, res: NextApiResponse) => void
 ) {
@@ -26,6 +27,11 @@ export function authenticate(
 
     // Extract the token from the Authorization header
     const token = authHeader.split(" ")[1];
+    if (!token || blacklistedTokens.has(token)) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: Token blacklisted" });
+    }
     try {
       // Ensure JWT_SECRET is defined
       if (!JWT_SECRET) {

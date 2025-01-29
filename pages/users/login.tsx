@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useAuth } from "../../components/common/AuthContext";
 import axios from "axios";
 
 export default function Login() {
@@ -8,7 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -16,15 +16,27 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await axios
-        .post("/api/users/auth/login", {
-          email,
-          password,
-        })
+      const token = localStorage.getItem("token"); // Retrieve the token from local storage
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      await axios
+        .post(
+          "/api/users/auth/login",
+          {
+            email,
+            password,
+          },
+          {
+            headers: headers,
+          }
+        )
         .then((response) => {
           const { token, userId } = response.data;
           localStorage.setItem("token", token);
-          router.push(`/users/${userId as string}`);
+          login(token, userId);
         });
     } catch (error) {
       console.error("Error during login:", error);

@@ -15,6 +15,7 @@ export default function UserPage() {
     axios
       .get(`/api/users/me`, {
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })

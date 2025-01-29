@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["img.spoonacular.com"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/users/login",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
