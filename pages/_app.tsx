@@ -4,10 +4,8 @@ import Header from "../components/Header";
 export default function MyApp({ Component, pageProps }: any) {
   return (
     <AuthProvider>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <Header />
-        <Component {...pageProps} />
-      </div>
+      <Header />
+      <Component {...pageProps} />
     </AuthProvider>
   );
 }
