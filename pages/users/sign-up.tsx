@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Container from "../../components/Container";
 import { useAuth } from "../../components/common/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 // import Button from "../../components/Button";
 // import Link from "next/link";
 import axios from "axios";
@@ -26,34 +26,29 @@ const SignUp = () => {
         setError("Passwords do not match");
         return;
       }
-      const res = await axios
-        .post(
-          "/api/users",
-          {
-            name,
-            email,
-            password,
+      const res = await axios.post(
+        "/api/users",
+        {
+          name,
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          const { newUser, token } = res.data;
-          console.log("Token received:", token); // Log the token
-          localStorage.setItem("token", token);
-          login(token, newUser._id);
-          console.log("Redirecting to:", `/users/${newUser._id}`); // Log the redirect URL
-          router.push(`/users/${newUser._id}`);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        }
+      );
+
+      setTimeout(() => {
+        alert("Welcome to Henrys Pantry, please login");
+        router.push(`/users/login`);
+      }, 1000);
     } catch (error) {
       console.error("Error signing up:", error);
       setError("An error occurred while signing up.");
+    } finally {
+      setLoading(false);
     }
   };
   return (
