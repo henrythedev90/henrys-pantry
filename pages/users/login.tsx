@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useAuth } from "../../components/common/AuthContext";
+import Container from "../../components/Container";
+import Button from "../../components/Button";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+import classes from "./login.module.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +14,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -47,30 +53,54 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+    <div className={classes.login_container}>
+      <div className={classes.login_container_welcome_container}>
+        <Container>
+          <h1>Welcome to the Pantry App</h1>
+          <p>Simplify your pantry management with our easy-to-use app.</p>
+          <p>Recipes with ingredients you already have</p>
+        </Container>
       </div>
       <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <Container>
+          <h1>Button to sign up</h1>
+          <Button
+            text="Sign up"
+            onClick={() => {
+              router.push("/users/sign-up");
+            }}
+          />
+        </Container>
       </div>
-      <button type="submit" disabled={loading}>
-        {loading ? "Logging in..." : "Login"}
-      </button>
+      <div className={classes.login_container_form_container}>
+        <Container>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>Email:</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label>Password:</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
 
-      {error && <div style={{ color: "red" }}>{error}</div>}
-    </form>
+            {error && <div style={{ color: "red" }}>{error}</div>}
+          </form>
+        </Container>
+      </div>
+    </div>
   );
 }

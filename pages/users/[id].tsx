@@ -11,7 +11,6 @@ export default function UserPage() {
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    debugger;
     axios
       .get(`/api/users/me`, {
         headers: {

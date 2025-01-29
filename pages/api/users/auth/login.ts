@@ -33,16 +33,14 @@ export default async function handler(
     }
 
     const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "15m",
     });
-    res
-      .status(200)
-      .json({
-        token,
-        userId: user._id,
-        login: "success",
-        message: "Login successful!",
-      });
+    res.status(200).json({
+      token,
+      userId: user._id,
+      login: "success",
+      message: "Login successful!",
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal Server Error" });
