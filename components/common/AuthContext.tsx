@@ -23,11 +23,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const login = (newToken: string, userId: string) => {
-    debugger;
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
-    router.push(`/users/${userId as string}`);
+  const login = async (newToken: string, userId: string) => {
+    try {
+      localStorage.setItem("token", newToken);
+      setToken(newToken);
+      router.push(`/users/${userId as string}`);
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
   };
 
   console.log(token, " in the auth provider this is the token");
