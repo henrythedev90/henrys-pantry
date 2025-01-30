@@ -3,6 +3,7 @@ import cloudinary from "../../../lib/cloudinary";
 import multer from "multer"; // Ensure multer is installed and imported correctly
 import clientPromise from "../../../lib/mongodb";
 import stream from "stream";
+
 import { authenticate } from "../../../middleware/authenticate";
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -28,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // Upload the file to Cloudinary
       cloudinary.uploader
         .upload_stream(
-          { folder: "profile_pictures" },
+          { folder: "profile_pictures_pantryApp" },
           async (error, result) => {
             if (error) {
               console.error("Error uploading to Cloudinary:", error);

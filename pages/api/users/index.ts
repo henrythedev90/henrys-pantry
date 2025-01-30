@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
-import { authenticate } from "../../../middleware/authenticate";
 import cloudinary from "../../../lib/cloudinary";
 
 // POST	/api/users	Create a new user
 // GET	/api/users	Retrieve all users (admin)
-
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
@@ -56,7 +54,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       let profilePicUrl = "";
       if (image) {
         const uploadProfilePicture = await cloudinary.uploader.upload(image, {
-          folder: "profile_pictures",
+          folder: "profile_picture_pantryApp",
         });
         profilePicUrl = uploadProfilePicture.secure_url;
       }
@@ -78,4 +76,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default authenticate(handler);
+export default handler;

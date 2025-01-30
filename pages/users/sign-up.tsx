@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import Container from "../../components/Container";
+import { CldUploadWidget } from "next-cloudinary";
 import { useRouter } from "next/router";
+import axios from "axios";
+import Container from "../../components/Container";
 // import Button from "../../components/Button";
 // import Link from "next/link";
-import axios from "axios";
 
 const SignUp = () => {
   const [values, setValues] = useState({
@@ -12,6 +13,7 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    image: "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -31,11 +33,13 @@ const SignUp = () => {
         setError("Passwords do not match");
         return;
       }
+      debugger;
       await axios.post("/api/users", {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         password: values.password,
+        image: values.image,
       });
 
       setValues({
@@ -44,6 +48,7 @@ const SignUp = () => {
         email: "",
         password: "",
         confirmPassword: "",
+        image: "",
       });
 
       setTimeout(() => {
@@ -112,6 +117,43 @@ const SignUp = () => {
               onChange={handleChanges}
               required
             />
+          </div>
+          <div>
+            <label>Profile Picture:</label>
+            <CldUploadWidget
+              uploadPreset="profile_picture_pantryApp"
+              onSuccess={(result: any) => {
+                setValues((prev) => ({
+                  ...prev,
+                  image: result.info.secure_url,
+                }));
+              }}
+            >
+              {({ open }) => (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    open();
+                  }}
+                  className="btn btn-primary"
+                >
+                  {values.image
+                    ? "Change Profile Picture"
+                    : "Upload Profile Picture"}
+                </button>
+              )}
+            </CldUploadWidget>
+
+            {values.image && (
+              <div>
+                <p>Preview:</p>
+                {values.email}
+                {values.firstName}
+                {values.lastName}
+                <img src={values.image} alt="Profile" width="150" />
+              </div>
+            )}
           </div>
           <button type="submit" disabled={loading}>
             {loading ? "Signing up..." : "Sign Up"}
