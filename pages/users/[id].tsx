@@ -4,7 +4,7 @@ import ProtectedRoute from "../../components/common/ProtectedRoute";
 import axios from "axios";
 import Link from "next/link";
 import Container from "../../components/Container";
-
+import Image from "next/image";
 // import { useEffect } from "react";
 // import { useRouter } from "next/navigation";
 
@@ -37,6 +37,12 @@ export default function UserPage() {
           <div>{userData?.user?.email}</div>
           {/* <Link href="/users/recipes">Recipes</Link> */}
           <Link href="/pantry">Pantry</Link>
+          <Image
+            src={userData?.user?.image}
+            alt="Profile"
+            width={150}
+            height={150}
+          />
           <div>
             <h1>Quick Stats:</h1>
             <div>

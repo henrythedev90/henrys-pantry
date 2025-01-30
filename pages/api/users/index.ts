@@ -1,14 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
+import cloudinary from "../../../lib/cloudinary";
 
 // POST	/api/users	Create a new user
 // GET	/api/users	Retrieve all users (admin)
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
 
@@ -26,7 +23,7 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     // Create a new user
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, image } = req.body;
 
     if (!email || !password) {
       return res
@@ -41,18 +38,32 @@ export default async function handler(
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
+
       const newUser = {
         email: email as string,
         password: hashedPassword as string,
         firstName: (firstName as string) || "",
         lastName: (lastName as string) || "",
+        image: (image as string) || "",
         recipes: [],
         pantry: [],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      await db.collection("users").insertOne(newUser);
+      let profilePicUrl = "";
+      if (image) {
+        const uploadProfilePicture = await cloudinary.uploader.upload(image, {
+          folder: "profile_picture_pantryApp",
+        });
+        profilePicUrl = uploadProfilePicture.secure_url;
+      }
+
+      if (profilePicUrl) {
+        newUser.image = profilePicUrl; // Add profilePicture to newUser object
+      }
+
+      await db.collection("users").insertOne(newUser); // Save newUser to the database
       res
         .status(201)
         .json({ message: "User created successfully!", newUser: newUser });
@@ -64,3 +75,5 @@ export default async function handler(
     res.status(405).json({ message: "Method Not Allowed" });
   }
 }
+
+export default handler;
