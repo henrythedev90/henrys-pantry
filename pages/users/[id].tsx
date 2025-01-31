@@ -31,8 +31,8 @@ export default function UserPage() {
   console.log(userData, "this is the user data");
   return (
     <ProtectedRoute>
-      <Container>
-        <div>
+      <div>
+        <Container>
           <div>Welcome {userData?.user?.name}</div>
           <div>{userData?.user?.email}</div>
           {/* <Link href="/users/recipes">Recipes</Link> */}
@@ -61,8 +61,8 @@ export default function UserPage() {
           <div>
             <Link href="/users/logout">Logout</Link>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
     </ProtectedRoute>
   );
 }
