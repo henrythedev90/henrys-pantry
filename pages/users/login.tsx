@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./styles/login.module.css"; // Correctly importing CSS module
+import SectionSubtitle from "../../components/SectionSubtitle";
 import Link from "next/link";
 
 export default function Login() {
@@ -65,7 +66,8 @@ export default function Login() {
         <div className={styles.login_container}>
           <div className={styles.login_container_title}>
             <div className={styles.login_container_title_text}>
-              <h1>Welcome to the Pantry App</h1>
+              <SectionSubtitle subTitle="Welcome to Henry's Pantry App" />
+
               <ul>
                 <li>
                   Simplify your pantry management with our easy-to-use app.
@@ -76,7 +78,6 @@ export default function Login() {
           </div>
           <div className={styles.login_container_title_buttons}>
             <div className={styles.login_form_container}>
-              <h1>Login</h1>
               <form onSubmit={handleSubmit}>
                 <div>
                   <label>Email:</label>
@@ -99,30 +100,32 @@ export default function Login() {
                   />
                 </div>
                 <div className={styles.login_form_container_button}>
-                  <button type="submit" disabled={loading}>
-                    {loading ? "Logging in..." : "Login"}
-                  </button>
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    text={loading ? "Logging in..." : "Login"}
+                  />
                 </div>
 
                 {error && <div style={{ color: "red" }}>{error}</div>}
               </form>
             </div>
-            <div className={styles.login_container_signup_container}>
-              <h4>New to the app?</h4>
-              <div className={styles.login_container_title_buttons_container}>
-                <Button
-                  text="Sign up"
-                  onClick={() => {
-                    router.push("/users/sign-up");
-                  }}
-                />
-                <Button
-                  text="Learn more about founder"
-                  onClick={() => {
-                    window.open("https://henry-nunez.com/", "_blank");
-                  }}
-                />
-              </div>
+          </div>
+          <div className={styles.login_container_signup_container}>
+            <h4>New to the app?</h4>
+            <div className={styles.login_container_title_buttons_container}>
+              <Button
+                text="Sign up"
+                onClick={() => {
+                  router.push("/users/sign-up");
+                }}
+              />
+              <Button
+                text="Learn more about founder"
+                onClick={() => {
+                  window.open("https://henry-nunez.com/", "_blank");
+                }}
+              />
             </div>
           </div>
         </div>

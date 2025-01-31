@@ -14,7 +14,7 @@
 }
 
 .primary {
-  background-color: var(--accent);
+  background-color: var(--text-secondary);
   color: var(--text-primary);
   border: 2px solid var(--text-primary);
   padding: 8px 26px;

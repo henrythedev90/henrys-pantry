@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthContext";
+
 export default function ProtectedRoute({
   children,
 }: {
@@ -25,7 +26,7 @@ export default function ProtectedRoute({
 
   useEffect(() => {
     if (!token && !isLogginOut) {
-      router.push("/not-found");
+      router.push(`/users/not-found`);
     }
   }, [router, token, isLogginOut]);
 
