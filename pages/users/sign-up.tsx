@@ -3,7 +3,9 @@ import { CldUploadWidget } from "next-cloudinary";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Container from "../../components/Container";
-// import Button from "../../components/Button";
+import SectionSubtitle from "../../components/SectionSubtitle";
+import classes from "./styles/signUp.module.css";
+import Button from "../../components/Button";
 // import Link from "next/link";
 
 const SignUp = () => {
@@ -66,101 +68,112 @@ const SignUp = () => {
   return (
     <div>
       <Container>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>First Name:</label>
-            <input
-              type="text"
-              name="firstName"
-              value={values.firstName}
-              onChange={handleChanges}
-              required
-            />
-          </div>
-          <div>
-            <label>Last Name:</label>
-            <input
-              type="text"
-              name="lastName"
-              value={values.lastName}
-              onChange={handleChanges}
-              required
-            />
-          </div>
-          <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={values.email}
-              onChange={handleChanges}
-              required
-            />
-          </div>
-
-          <div>
-            <label>Password:</label>
-            <input
-              type="password"
-              name="password"
-              value={values.password}
-              onChange={handleChanges}
-              required
-            />
-          </div>
-          <div>
-            <label>Confirm Password:</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={values.confirmPassword}
-              onChange={handleChanges}
-              required
-            />
-          </div>
-          <div>
-            <label>Profile Picture:</label>
-            <CldUploadWidget
-              uploadPreset="profile_picture_pantryApp"
-              onSuccess={(result: any) => {
-                setValues((prev) => ({
-                  ...prev,
-                  image: result.info.secure_url,
-                }));
-              }}
-            >
-              {({ open }) => (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    open();
-                  }}
-                  className="btn btn-primary"
-                >
-                  {values.image
-                    ? "Change Profile Picture"
-                    : "Upload Profile Picture"}
-                </button>
-              )}
-            </CldUploadWidget>
-
-            {values.image && (
+        <div className={classes.signup_container}>
+          <SectionSubtitle subTitle="Welcome to Henry's Pantry App" />
+          <div className={classes.signup_container_form}>
+            <form onSubmit={handleSubmit}>
               <div>
-                <p>Preview:</p>
-                {values.email}
-                {values.firstName}
-                {values.lastName}
-                <img src={values.image} alt="Profile" width="150" />
+                <label>First Name:</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={values.firstName}
+                  onChange={handleChanges}
+                  required
+                />
               </div>
-            )}
-          </div>
-          <button type="submit" disabled={loading}>
-            {loading ? "Signing up..." : "Sign Up"}
-          </button>
+              <div>
+                <label>Last Name:</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={values.lastName}
+                  onChange={handleChanges}
+                  required
+                />
+              </div>
+              <div>
+                <label>Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChanges}
+                  required
+                />
+              </div>
 
-          {error && <div style={{ color: "red" }}>{error}</div>}
-        </form>
+              <div>
+                <label>Password:</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChanges}
+                  required
+                />
+              </div>
+              <div>
+                <label>Confirm Password:</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={values.confirmPassword}
+                  onChange={handleChanges}
+                  required
+                />
+              </div>
+              <div className={classes.signup_container_form_image}>
+                <label>Profile Picture:</label>
+                <CldUploadWidget
+                  uploadPreset="profile_picture_pantryApp"
+                  onSuccess={(result: any) => {
+                    setValues((prev) => ({
+                      ...prev,
+                      image: result.info.secure_url,
+                    }));
+                  }}
+                >
+                  {({ open }) => (
+                    <Button
+                      type="button"
+                      onClick={() => open()}
+                      text={
+                        values.image
+                          ? "Change Profile Picture"
+                          : "Upload Profile Picture"
+                      }
+                    />
+                  )}
+                </CldUploadWidget>
+
+                {/* {values.image && (
+                  <div>
+                    <p>Preview:</p>
+                    {values.email}
+                    {values.firstName}
+                    {values.lastName}
+                    <img src={values.image} alt="Profile" width="150" />
+                  </div>
+                )} */}
+              </div>
+              <div className={classes.signup_container_form_buttons}>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  text={loading ? "Signing up..." : "Sign Up"}
+                />
+                <Button
+                  type="button"
+                  onClick={() => router.push("/users/login")}
+                  text="Login"
+                />
+              </div>
+
+              {error && <div style={{ color: "red" }}>{error}</div>}
+            </form>
+          </div>
+        </div>
       </Container>
     </div>
   );
