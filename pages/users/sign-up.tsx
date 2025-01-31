@@ -124,7 +124,14 @@ const SignUp = () => {
                 />
               </div>
               <div className={classes.signup_container_form_image}>
-                <label>Profile Picture:</label>
+                <label>
+                  Profile Picture:{" "}
+                  {values.image && (
+                    <span style={{ color: "green", fontSize: "10px" }}>
+                      image ready to upload!
+                    </span>
+                  )}
+                </label>
                 <CldUploadWidget
                   uploadPreset="profile_picture_pantryApp"
                   onSuccess={(result: any) => {
