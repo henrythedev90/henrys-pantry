@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import styles from "./styles/login.module.css"; // Correctly importing CSS module
 import SectionSubtitle from "../../components/SectionSubtitle";
-import Link from "next/link";
 
 export default function Login() {
   const [values, setValues] = useState({
@@ -35,7 +34,7 @@ export default function Login() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
+      debugger;
       await axios
         .post(
           "/api/users/auth/login",
@@ -48,6 +47,7 @@ export default function Login() {
           }
         )
         .then((response) => {
+          console.log(response.data);
           const { token, userId } = response.data;
           localStorage.setItem("token", token);
           login(token, userId);

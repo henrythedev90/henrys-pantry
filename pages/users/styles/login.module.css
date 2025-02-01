@@ -4,7 +4,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 30px;
+    padding: 24px 30px;
     margin: 6px auto;
     max-height: 667px;
     background-color: var(--background);
@@ -112,7 +112,7 @@
     width: 100%;
   }
   .login_form_container form div input {
-    padding: 4px;
+    padding: 8px;
     font-size: 16px;
     text-align: start;
     width: 100%;
@@ -245,7 +245,7 @@
     width: 100%;
   }
   .login_form_container form div input {
-    padding: 4px;
+    padding: 8px;
     font-size: 16px;
     text-align: start;
     width: 100%;

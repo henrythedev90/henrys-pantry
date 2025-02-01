@@ -33,7 +33,7 @@ export default async function handler(
     }
 
     const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-      expiresIn: "15m",
+      expiresIn: "7d",
     });
     res.status(200).json({
       token,

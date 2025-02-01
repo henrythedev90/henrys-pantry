@@ -4,6 +4,7 @@ import classes from "./Header.module.css";
 import Link from "next/link";
 import { NAV_LINK } from "../data/navLinks";
 import { useAuth } from "../common/AuthContext";
+import Button from "../../components/Button";
 import jwt from "jsonwebtoken";
 
 const Header = () => {
@@ -48,7 +49,6 @@ const Header = () => {
             >
               <h1>
                 <span>H</span>enry's Pantry
-                <span>logged in</span>
               </h1>
             </Link>
           </div>
@@ -64,11 +64,15 @@ const Header = () => {
                     {link.display}
                   </Link>
                 ))}
-                <button onClick={logout}>Logout</button>
+                <Button text="Logout" onClick={logout} />
               </>
 
               <div className={`${classes.mobile_logo}`}>
-                <Link href={"/"}>
+                <Link
+                  href={`/users/${
+                    (decode && typeof decode !== "string" && decode.id) || ""
+                  }`}
+                >
                   <h1 className={classes.mobile_logo_title}>
                     <span>H</span>enry's Pantry
                   </h1>
