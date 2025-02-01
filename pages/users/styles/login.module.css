@@ -145,7 +145,7 @@
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr 1fr;
     padding: 100px;
-    margin: 30px auto;
+    margin: 100px auto;
     border: 2px solid var(--text-primary);
     border-radius: 16px;
   }

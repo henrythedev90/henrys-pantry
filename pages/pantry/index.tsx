@@ -5,7 +5,7 @@ import Container from "../../components/Container";
 import classes from "./styles/pantry.module.css";
 export default function Pantry() {
   const [pantry, setPantry] = useState<any>(null);
-
+  const [openAisle, setOpenAisle] = useState<string | null>(null);
   useEffect(() => {
     axios
       .get(`/api/pantry`, {
@@ -30,25 +30,66 @@ export default function Pantry() {
           <div>Pantry</div>
           <div>{pantry?.pantry?.length}</div>
           <div>
-            {pantry?.pantry?.map(
-              (el: {
-                name: string;
-                quantity: number;
-                unit: string;
-                expirationDate: Date;
-              }) => (
-                <div key={el.name}>
-                  <p>{el.name}</p>
-                  <p>{el.quantity}</p>
-                  <p>{el.unit}</p>
-                  <p>
-                    {el.expirationDate
-                      ? el.expirationDate.toLocaleDateString()
-                      : "N/A"}
-                  </p>
-                </div>
+            {pantry &&
+              Object.entries(
+                pantry.pantry.reduce(
+                  (acc: Record<string, any[]>, item: any) => {
+                    if (!acc[item.aisle]) acc[item.aisle] = [];
+                    acc[item.aisle].push(item);
+                    return acc;
+                  },
+                  {}
+                )
               )
-            )}
+                .sort(([aisleA], [aisleB]) => aisleA.localeCompare(aisleB))
+                .map(([aisle, items]) => (
+                  <div
+                    key={aisle}
+                    className={`pantry_${aisle
+                      .toLowerCase()
+                      .replace(" ", "_")}`}
+                  >
+                    <div
+                      className={classes.toggle_pantry}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setOpenAisle(openAisle === aisle ? null : aisle);
+                      }}
+                    >
+                      <h1 className={classes.pantry_list_mobile_title}>
+                        {aisle}
+                      </h1>
+                      {openAisle === aisle ? (
+                        <div className={classes.chevron_arrow_up}></div>
+                      ) : (
+                        <div className={classes.chevron_arrow_down}></div>
+                      )}
+                    </div>
+                    {openAisle === aisle && (
+                      <ul
+                        className={`${classes.pantry_list_mobile_item}${
+                          openAisle === aisle ? " open" : ""
+                        }`}
+                      >
+                        {Array.isArray(items) &&
+                          items.map((el: any) => (
+                            <div key={el._id.toString()}>
+                              <p>{el.name}</p>
+                              <p>{el.quantity}</p>
+                              <p>{el.aisle}</p>
+                              <p>
+                                {el.expirationDate
+                                  ? new Date(
+                                      el.expirationDate
+                                    ).toLocaleDateString()
+                                  : "N/A"}
+                              </p>
+                            </div>
+                          ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
           </div>
         </div>
       </Container>
