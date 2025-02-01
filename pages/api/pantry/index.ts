@@ -49,85 +49,9 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
 
         let image, aisle, nutrition, apiId;
 
-        if (existingFoodItem) {
-          // If the item exists in the foodItems collection, use its details
-          image = existingFoodItem.image;
-          aisle = existingFoodItem.aisle;
-          apiId = existingFoodItem.apiId;
-          nutrition = existingFoodItem.nutrition;
-
-          // If nutrition is missing, fetch it from Spoonacular API
-          if (!nutrition) {
-            const spoonacularDetail = await fetch(
-              `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
-            );
-            const ingredientDetailsFromAPI = await spoonacularDetail.json();
-
-            nutrition = ingredientDetailsFromAPI.nutrition
-              ? {
-                  nutritions: ingredientDetailsFromAPI.nutrition.nutrients.map(
-                    (nutrient: any) => ({
-                      name: nutrient.name,
-                      amount: nutrient.amount,
-                      unit: nutrient.unit,
-                      percentOfDailyNeeds: nutrient.percentOfDailyNeeds || 0,
-                    })
-                  ),
-                  properties: ingredientDetailsFromAPI.nutrition.properties.map(
-                    (property: any) => ({
-                      name: property.name,
-                      amount: property.amount,
-                      unit: property.unit,
-                    })
-                  ),
-                  caloricBreakdown: {
-                    percentProtein:
-                      ingredientDetailsFromAPI.nutrition.caloricBreakdown
-                        .percentProtein || 0,
-                    percentFat:
-                      ingredientDetailsFromAPI.nutrition.caloricBreakdown
-                        .percentFat || 0,
-                    percentCarbs:
-                      ingredientDetailsFromAPI.nutrition.caloricBreakdown
-                        .percentCarbs || 0,
-                  },
-                  weightPerServing: {
-                    amount:
-                      ingredientDetailsFromAPI.nutrition.weightPerServing
-                        .amount || 0,
-                    unit:
-                      ingredientDetailsFromAPI.nutrition.weightPerServing
-                        .unit || "g",
-                  },
-                  categoryPath: ingredientDetailsFromAPI.categoryPath || [""],
-                }
-              : null;
-          }
-        } else {
-          // If the food item doesn't exist, fetch details from Spoonacular API
-          const spoonacularSearch = await fetch(
-            `https://api.spoonacular.com/food/ingredients/search?query=${name}&apiKey=${process.env.SPOONACULAR_API_KEY}`
-          );
-          const spoonacularSearchData = await spoonacularSearch.json();
-          console.log(spoonacularSearchData);
-          const ingredient = spoonacularSearchData.results[0] || {};
-
-          if (!ingredient.id) {
-            return res.status(404).json({ message: "Ingredient not found" });
-          }
-
-          // Fetch detailed ingredient information using API ID
-          apiId = ingredient.id;
-          const spoonacularDetail = await fetch(
-            `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
-          );
-          const ingredientDetailsFromAPI = await spoonacularDetail.json();
-
-          image = ingredient.image
-            ? `https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`
-            : null;
-          aisle = ingredientDetailsFromAPI.aisle || "Unknown";
-          nutrition = ingredientDetailsFromAPI.nutrition
+        // Function to extract nutrition from API data
+        const extractNutrition = (ingredientDetailsFromAPI: any) => {
+          return ingredientDetailsFromAPI.nutrition
             ? {
                 nutritions: ingredientDetailsFromAPI.nutrition.nutrients.map(
                   (nutrient: any) => ({
@@ -166,6 +90,47 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
                 categoryPath: ingredientDetailsFromAPI.categoryPath || [""],
               }
             : null;
+        };
+
+        if (existingFoodItem) {
+          // If the item exists in the foodItems collection, use its details
+          image = existingFoodItem.image;
+          aisle = existingFoodItem.aisle;
+          apiId = existingFoodItem.apiId;
+          nutrition = existingFoodItem.nutrition;
+
+          // If nutrition is missing, fetch it from Spoonacular API
+          if (!nutrition) {
+            const spoonacularDetail = await fetch(
+              `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
+            );
+            const ingredientDetailsFromAPI = await spoonacularDetail.json();
+            nutrition = extractNutrition(ingredientDetailsFromAPI);
+          }
+        } else {
+          // If the food item doesn't exist, fetch details from Spoonacular API
+          const spoonacularSearch = await fetch(
+            `https://api.spoonacular.com/food/ingredients/search?query=${name}&apiKey=${process.env.SPOONACULAR_API_KEY}`
+          );
+          const spoonacularSearchData = await spoonacularSearch.json();
+          const ingredient = spoonacularSearchData.results[0] || {};
+
+          if (!ingredient.id) {
+            return res.status(404).json({ message: "Ingredient not found" });
+          }
+
+          // Fetch detailed ingredient information using API ID
+          apiId = ingredient.id;
+          const spoonacularDetail = await fetch(
+            `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
+          );
+          const ingredientDetailsFromAPI = await spoonacularDetail.json();
+
+          image = ingredient.image
+            ? `https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`
+            : null;
+          aisle = ingredientDetailsFromAPI.aisle || "Unknown";
+          nutrition = extractNutrition(ingredientDetailsFromAPI);
         }
 
         // Update or add the item in the pantry array (no nutrition in users collection)
