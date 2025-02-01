@@ -43,6 +43,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const sortedRecipes = recipes.sort(
           (a: any, b: any) => b.missedIngredientCount + a.missedIngredientCount
         );
+        await db.collection("cachedRecipes").insertMany(
+          sortedRecipes.map((recipe: any) => ({
+            ...recipe,
+            fetchedAt: new Date(),
+          }))
+        );
 
         res.status(200).json(sortedRecipes);
       } catch (error) {

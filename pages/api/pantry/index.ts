@@ -40,6 +40,7 @@ interface PantryItem {
     };
     categoryPath: [string];
   };
+  submissionCount: number;
 }
 
 async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -74,6 +75,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
           `https://api.spoonacular.com/food/ingredients/search?query=${name}&apiKey=${process.env.SPOONACULAR_API_KEY}`
         );
         const spoonacularSearchData = await spoonacularSearch.json();
+        console.log(spoonacularSearchData);
         const ingredient = spoonacularSearchData.results[0] || {};
 
         if (!ingredient.id) {
@@ -171,6 +173,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
               categoryPath: [""],
             },
             createdAt: new Date(),
+            submissionCount: +1,
           };
 
           await db.collection("users").updateOne(
@@ -182,24 +185,41 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
             { upsert: true }
           );
 
-          // Update `foodItems` with correct aisle and submission count
-          await db.collection("foodItems").updateOne(
-            { name: newItem.name }, // Ensure unique names
-            {
-              $set: {
-                name: newItem.name,
-                image: newItem.image,
-                nutrition: newItem.nutrition,
-                aisle: newItem.aisle,
-                fetchedAt: new Date(),
-              },
-              $inc: { submissionCount: 1 }, // Track submission count
-            },
-            { upsert: true }
-          );
+          const existingItem = await db
+            .collection("foodItems")
+            .findOne({ name: newItem.name });
+
+          if (existingItem) {
+            // If item exists, increment submissionCount
+            await db.collection("foodItems").updateOne(
+              { name: newItem.name },
+              {
+                $set: {
+                  name: newItem.name,
+                  image: newItem.image,
+                  nutrition: newItem.nutrition,
+                  submissionCount: newItem.submissionCount,
+                  aisle: newItem.aisle,
+                  fetchedAt: new Date(),
+                },
+              }
+            );
+          } else {
+            // If item does not exist, insert it with submissionCount = 1
+            await db.collection("foodItems").insertOne({
+              name: newItem.name,
+              image: newItem.image,
+              nutrition: newItem.nutrition,
+              aisle: newItem.aisle,
+              fetchedAt: new Date(),
+              submissionCount: 1,
+            });
+          }
         }
 
-        res.status(201).json({ message: "Pantry updated successfully" });
+        res.status(201).json({
+          message: "Pantry updated successfully",
+        });
       } catch (err) {
         console.error("Error updating pantry:", err);
         res.status(500).json({ message: "Internal Server Error" });
