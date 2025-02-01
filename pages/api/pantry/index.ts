@@ -13,34 +13,6 @@ interface PantryItem {
   createdAt: Date;
   image: string | null;
   aisle: string;
-  nutrition: {
-    nutritions: [
-      {
-        name: string;
-        amount: number;
-        unit: string;
-        percentOfDailyNeeds: number;
-      }
-    ];
-    properties: [
-      {
-        name: string;
-        amount: number;
-        unit: string;
-      }
-    ];
-    caloricBreakdown: {
-      percentProtein: number;
-      percentFat: number;
-      percentCarbs: number;
-    };
-    weightPerServing: {
-      amount: number;
-      unit: string;
-    };
-    categoryPath: [string];
-  };
-  submissionCount: number;
 }
 
 async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -81,10 +53,58 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
           // If the item exists in the foodItems collection, use its details
           image = existingFoodItem.image;
           aisle = existingFoodItem.aisle;
-          nutrition = existingFoodItem.nutrition;
           apiId = existingFoodItem.apiId;
+          nutrition = existingFoodItem.nutrition;
+
+          // If nutrition is missing, fetch it from Spoonacular API
+          if (!nutrition) {
+            const spoonacularDetail = await fetch(
+              `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
+            );
+            const ingredientDetailsFromAPI = await spoonacularDetail.json();
+
+            nutrition = ingredientDetailsFromAPI.nutrition
+              ? {
+                  nutritions: ingredientDetailsFromAPI.nutrition.nutrients.map(
+                    (nutrient: any) => ({
+                      name: nutrient.name,
+                      amount: nutrient.amount,
+                      unit: nutrient.unit,
+                      percentOfDailyNeeds: nutrient.percentOfDailyNeeds || 0,
+                    })
+                  ),
+                  properties: ingredientDetailsFromAPI.nutrition.properties.map(
+                    (property: any) => ({
+                      name: property.name,
+                      amount: property.amount,
+                      unit: property.unit,
+                    })
+                  ),
+                  caloricBreakdown: {
+                    percentProtein:
+                      ingredientDetailsFromAPI.nutrition.caloricBreakdown
+                        .percentProtein || 0,
+                    percentFat:
+                      ingredientDetailsFromAPI.nutrition.caloricBreakdown
+                        .percentFat || 0,
+                    percentCarbs:
+                      ingredientDetailsFromAPI.nutrition.caloricBreakdown
+                        .percentCarbs || 0,
+                  },
+                  weightPerServing: {
+                    amount:
+                      ingredientDetailsFromAPI.nutrition.weightPerServing
+                        .amount || 0,
+                    unit:
+                      ingredientDetailsFromAPI.nutrition.weightPerServing
+                        .unit || "g",
+                  },
+                  categoryPath: ingredientDetailsFromAPI.categoryPath || [""],
+                }
+              : null;
+          }
         } else {
-          // Otherwise, fetch image and basic ingredient info from Spoonacular API
+          // If the food item doesn't exist, fetch details from Spoonacular API
           const spoonacularSearch = await fetch(
             `https://api.spoonacular.com/food/ingredients/search?query=${name}&apiKey=${process.env.SPOONACULAR_API_KEY}`
           );
@@ -177,7 +197,6 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
             apiId,
             aisle,
             createdAt: new Date(),
-            submissionCount: +1,
           };
 
           await db.collection("users").updateOne(

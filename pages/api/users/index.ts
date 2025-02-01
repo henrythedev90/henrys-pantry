@@ -5,6 +5,18 @@ import cloudinary from "../../../lib/cloudinary";
 
 // POST	/api/users	Create a new user
 // GET	/api/users	Retrieve all users (admin)
+interface User {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  image: string;
+  recipes: [];
+  pantry: [];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
@@ -39,12 +51,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const newUser = {
-        email: email as string,
-        password: hashedPassword as string,
-        firstName: (firstName as string) || "",
-        lastName: (lastName as string) || "",
-        image: (image as string) || "",
+      const newUser: User = {
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        image,
         recipes: [],
         pantry: [],
         createdAt: new Date(),
