@@ -70,69 +70,85 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
         const { name, quantity, expirationDate } = req.body;
         const userObjectId = new ObjectId(userId as string);
 
-        // Fetch image and basic ingredient info
-        const spoonacularSearch = await fetch(
-          `https://api.spoonacular.com/food/ingredients/search?query=${name}&apiKey=${process.env.SPOONACULAR_API_KEY}`
-        );
-        const spoonacularSearchData = await spoonacularSearch.json();
-        console.log(spoonacularSearchData);
-        const ingredient = spoonacularSearchData.results[0] || {};
+        // Check if the ingredient exists in the foodItems collection
+        const existingFoodItem = await db
+          .collection("foodItems")
+          .findOne({ name });
 
-        if (!ingredient.id) {
-          return res.status(404).json({ message: "Ingredient not found" });
+        let image, aisle, nutrition, apiId;
+
+        if (existingFoodItem) {
+          // If the item exists in the foodItems collection, use its details
+          image = existingFoodItem.image;
+          aisle = existingFoodItem.aisle;
+          nutrition = existingFoodItem.nutrition;
+          apiId = existingFoodItem.apiId;
+        } else {
+          // Otherwise, fetch image and basic ingredient info from Spoonacular API
+          const spoonacularSearch = await fetch(
+            `https://api.spoonacular.com/food/ingredients/search?query=${name}&apiKey=${process.env.SPOONACULAR_API_KEY}`
+          );
+          const spoonacularSearchData = await spoonacularSearch.json();
+          console.log(spoonacularSearchData);
+          const ingredient = spoonacularSearchData.results[0] || {};
+
+          if (!ingredient.id) {
+            return res.status(404).json({ message: "Ingredient not found" });
+          }
+
+          // Fetch detailed ingredient information using API ID
+          apiId = ingredient.id;
+          const spoonacularDetail = await fetch(
+            `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
+          );
+          const ingredientDetailsFromAPI = await spoonacularDetail.json();
+
+          image = ingredient.image
+            ? `https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`
+            : null;
+          aisle = ingredientDetailsFromAPI.aisle || "Unknown";
+          nutrition = ingredientDetailsFromAPI.nutrition
+            ? {
+                nutritions: ingredientDetailsFromAPI.nutrition.nutrients.map(
+                  (nutrient: any) => ({
+                    name: nutrient.name,
+                    amount: nutrient.amount,
+                    unit: nutrient.unit,
+                    percentOfDailyNeeds: nutrient.percentOfDailyNeeds || 0,
+                  })
+                ),
+                properties: ingredientDetailsFromAPI.nutrition.properties.map(
+                  (property: any) => ({
+                    name: property.name,
+                    amount: property.amount,
+                    unit: property.unit,
+                  })
+                ),
+                caloricBreakdown: {
+                  percentProtein:
+                    ingredientDetailsFromAPI.nutrition.caloricBreakdown
+                      .percentProtein || 0,
+                  percentFat:
+                    ingredientDetailsFromAPI.nutrition.caloricBreakdown
+                      .percentFat || 0,
+                  percentCarbs:
+                    ingredientDetailsFromAPI.nutrition.caloricBreakdown
+                      .percentCarbs || 0,
+                },
+                weightPerServing: {
+                  amount:
+                    ingredientDetailsFromAPI.nutrition.weightPerServing
+                      .amount || 0,
+                  unit:
+                    ingredientDetailsFromAPI.nutrition.weightPerServing.unit ||
+                    "g",
+                },
+                categoryPath: ingredientDetailsFromAPI.categoryPath || [""],
+              }
+            : null;
         }
 
-        const image = ingredient.image
-          ? `https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`
-          : null;
-        const apiId = ingredient.id;
-
-        // Fetch detailed ingredient information using API ID
-        const spoonacularDetail = await fetch(
-          `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
-        );
-        const ingredientDetails = await spoonacularDetail.json();
-
-        const aisle = ingredientDetails.aisle || "Unknown";
-
-        // Extract nutrition details
-        const nutrition = ingredientDetails.nutrition
-          ? {
-              nutritions: ingredientDetails.nutrition.nutrients.map(
-                (nutrient: any) => ({
-                  name: nutrient.name,
-                  amount: nutrient.amount,
-                  unit: nutrient.unit,
-                  percentOfDailyNeeds: nutrient.percentOfDailyNeeds || 0,
-                })
-              ),
-              properties: ingredientDetails.nutrition.properties.map(
-                (property: any) => ({
-                  name: property.name,
-                  amount: property.amount,
-                  unit: property.unit,
-                })
-              ),
-              caloricBreakdown: {
-                percentProtein:
-                  ingredientDetails.nutrition.caloricBreakdown.percentProtein ||
-                  0,
-                percentFat:
-                  ingredientDetails.nutrition.caloricBreakdown.percentFat || 0,
-                percentCarbs:
-                  ingredientDetails.nutrition.caloricBreakdown.percentCarbs ||
-                  0,
-              },
-              weightPerServing: {
-                amount:
-                  ingredientDetails.nutrition.weightPerServing.amount || 0,
-                unit: ingredientDetails.nutrition.weightPerServing.unit || "g",
-              },
-              categoryPath: ingredientDetails.categoryPath || [""],
-            }
-          : null;
-
-        // Update or add the item in the pantry array
+        // Update or add the item in the pantry array (no nutrition in users collection)
         const result = await db.collection("users").updateOne(
           { _id: userObjectId, "pantry.name": name }, // Check if item already exists
           {
@@ -144,13 +160,12 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
                 : null,
               "pantry.$.image": image,
               "pantry.$.aisle": aisle,
-              "pantry.$.nutrition": nutrition,
               updatedAt: new Date(),
             },
           }
         );
 
-        // If the item doesn't exist, insert it as a new entry
+        // If the item doesn't exist in the pantry, insert it as a new entry
         if (result.modifiedCount === 0) {
           const newItem: PantryItem = {
             _id: new ObjectId(),
@@ -161,17 +176,6 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
             image,
             apiId,
             aisle,
-            nutrition: nutrition || {
-              nutritions: [],
-              properties: [],
-              caloricBreakdown: {
-                percentProtein: 0,
-                percentFat: 0,
-                percentCarbs: 0,
-              },
-              weightPerServing: { amount: 0, unit: "g" },
-              categoryPath: [""],
-            },
             createdAt: new Date(),
             submissionCount: +1,
           };
@@ -184,37 +188,38 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
             },
             { upsert: true }
           );
+        }
 
-          const existingItem = await db
-            .collection("foodItems")
-            .findOne({ name: newItem.name });
+        // Update or insert the item in the foodItems collection (with nutrition info)
+        const existingItem = await db
+          .collection("foodItems")
+          .findOne({ name: name });
 
-          if (existingItem) {
-            // If item exists, increment submissionCount
-            await db.collection("foodItems").updateOne(
-              { name: newItem.name },
-              {
-                $set: {
-                  name: newItem.name,
-                  image: newItem.image,
-                  nutrition: newItem.nutrition,
-                  submissionCount: newItem.submissionCount,
-                  aisle: newItem.aisle,
-                  fetchedAt: new Date(),
-                },
-              }
-            );
-          } else {
-            // If item does not exist, insert it with submissionCount = 1
-            await db.collection("foodItems").insertOne({
-              name: newItem.name,
-              image: newItem.image,
-              nutrition: newItem.nutrition,
-              aisle: newItem.aisle,
-              fetchedAt: new Date(),
-              submissionCount: 1,
-            });
-          }
+        if (existingItem) {
+          // If item exists, increment submissionCount and update details
+          await db.collection("foodItems").updateOne(
+            { name: name },
+            {
+              $set: {
+                name: name,
+                image: image,
+                nutrition: nutrition,
+                aisle: aisle,
+                submissionCount: existingItem.submissionCount + 1,
+                fetchedAt: new Date(),
+              },
+            }
+          );
+        } else {
+          // If item does not exist, insert it with nutrition info and submissionCount = 1
+          await db.collection("foodItems").insertOne({
+            name: name,
+            image: image,
+            nutrition: nutrition,
+            aisle: aisle,
+            fetchedAt: new Date(),
+            submissionCount: 1,
+          });
         }
 
         res.status(201).json({
