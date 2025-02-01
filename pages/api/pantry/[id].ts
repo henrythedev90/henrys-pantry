@@ -37,7 +37,7 @@ async function pantryItemHandler(req: NextApiRequest, res: NextApiResponse) {
       break;
     case "PUT":
       try {
-        const { name, quantity, unit, expirationDate } = req.body;
+        const { name, quantity, expirationDate } = req.body;
         const updatedItem: any = { updatedAt: new Date() };
 
         const existingItem = await db.collection("users").findOne(
@@ -62,7 +62,6 @@ async function pantryItemHandler(req: NextApiRequest, res: NextApiResponse) {
 
         updatedItem.name = name || currentItem.name;
         updatedItem.quantity = quantity || currentItem.quantity;
-        updatedItem.unit = unit || currentItem.unit;
         updatedItem.expirationDate = expirationDate
           ? new Date(expirationDate)
           : currentItem.expirationDate;
@@ -76,7 +75,6 @@ async function pantryItemHandler(req: NextApiRequest, res: NextApiResponse) {
             $set: {
               "pantry.$.name": updatedItem.name,
               "pantry.$.quantity": updatedItem.quantity,
-              "pantry.$.unit": updatedItem.unit,
               "pantry.$.expirationDate": updatedItem.expirationDate,
               "pantry.$.updatedAt": updatedItem.updatedAt,
             },
