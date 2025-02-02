@@ -6,6 +6,7 @@ import classes from "./styles/pantry.module.css";
 export default function Pantry() {
   const [pantry, setPantry] = useState<any>(null);
   const [openAisle, setOpenAisle] = useState<string | null>(null);
+
   useEffect(() => {
     axios
       .get(`/api/pantry`, {
