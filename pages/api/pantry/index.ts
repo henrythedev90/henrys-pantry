@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb";
 
 interface PantryItem {
   _id: ObjectId;
-  userId: ObjectId;
+  ownerId: ObjectId;
   apiId: number;
   name: string;
   quantity: number;
@@ -104,6 +104,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
             const spoonacularDetail = await fetch(
               `https://api.spoonacular.com/food/ingredients/${apiId}/information?amount=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
             );
+            console.log(spoonacularDetail);
             const ingredientDetailsFromAPI = await spoonacularDetail.json();
             nutrition = extractNutrition(ingredientDetailsFromAPI);
           }
@@ -154,7 +155,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
         if (result.modifiedCount === 0) {
           const newItem: PantryItem = {
             _id: new ObjectId(),
-            userId: userObjectId,
+            ownerId: userObjectId,
             name,
             quantity,
             expirationDate: expirationDate ? new Date(expirationDate) : null,
@@ -189,6 +190,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
                 image: image,
                 nutrition: nutrition,
                 aisle: aisle,
+                apiId: apiId,
                 submissionCount: existingItem.submissionCount + 1,
                 fetchedAt: new Date(),
               },
@@ -203,6 +205,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
             aisle: aisle,
             fetchedAt: new Date(),
             submissionCount: 1,
+            apiId: apiId,
           });
         }
 

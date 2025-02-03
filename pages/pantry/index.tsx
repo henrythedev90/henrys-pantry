@@ -54,7 +54,7 @@ export default function Pantry() {
         <div className={classes.pantry_container}>
           <h1>Pantry</h1>
           {/* mobile */}
-          {/* <div>
+          <div>
             {pantry &&
               Object.entries(
                 pantry.pantry.reduce(
@@ -82,9 +82,13 @@ export default function Pantry() {
                         setOpenAisle(openAisle === aisle ? null : aisle);
                       }}
                     >
-                      <h1 className={classes.pantry_list_mobile_title}>
-                        {aisle}
-                      </h1>
+                      <h2 className={classes.pantry_list_mobile_title}>
+                        {aisle
+                          .split(";")
+                          .map((aisle: string, index: number) => (
+                            <div key={index}>{aisle}</div>
+                          ))}
+                      </h2>
                       <div
                         className={
                           openAisle === aisle
@@ -118,7 +122,7 @@ export default function Pantry() {
                     )}
                   </div>
                 ))}
-          </div> */}
+          </div>
           {/* desktop */}
           <div className={classes.aisle_nav}>
             {aisleTypes.map((aisle) => (
