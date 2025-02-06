@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../lib/mongodb";
 import { authenticate } from "../../../middleware/authenticate";
 import { ObjectId } from "mongodb";
+import { Ingredient, Recipe } from "../../../components/types/types";
 
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
@@ -31,7 +32,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // Build the recipe object
-        const recipe = {
+        const recipe: Recipe = {
           _id: new ObjectId(),
           userId: new ObjectId(userId as string),
           originalId: recipeData.id,
@@ -41,7 +42,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           image: recipeData.image,
           summary: recipeData.summary,
           instructions: recipeData.instructions,
-          ingredients: recipeData.extendedIngredients.map((ing: any) => ({
+          ingredients: recipeData.extendedIngredients.map((ing: any): Ingredient => ({
             name: ing.name,
             amount: ing.amount,
             unit: ing.unit,
@@ -77,7 +78,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           { _id: new ObjectId(userId as string) },
           {
             $push: {
-              recipes: recipe,
+              "recipes": recipe as any,
             },
             $set: { updatedAt: new Date() },
           },
@@ -85,7 +86,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         );
 
         await db.collection("cachedRecipes").updateOne(
-          { _id: recipe.originalId },
+          { _id: recipe._id },
           {
             $set: { ...recipe, fetchedAt: new Date() },
             $inc: { count: 1 },

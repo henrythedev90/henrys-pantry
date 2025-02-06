@@ -2,18 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { authenticate } from "../../../middleware/authenticate";
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
-
-interface PantryItem {
-  _id: ObjectId;
-  ownerId: ObjectId;
-  apiId: number;
-  name: string;
-  quantity: number;
-  expirationDate: Date | null;
-  createdAt: Date;
-  image: string | null;
-  aisle: string;
-}
+import {PantryItem} from "../../../components/types/types";
 
 async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
@@ -168,7 +157,7 @@ async function pantryHandler(req: NextApiRequest, res: NextApiResponse) {
           await db.collection("users").updateOne(
             { _id: userObjectId },
             {
-              $push: { pantry: newItem },
+              $push: { pantry: newItem as any },
               $set: { updatedAt: new Date() },
             },
             { upsert: true }

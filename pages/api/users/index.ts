@@ -2,20 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../lib/mongodb";
 import bcrypt from "bcryptjs";
 import cloudinary from "../../../lib/cloudinary";
+import {User, Recipe, PantryItem} from "../../../components/types/types"
 
 // POST	/api/users	Create a new user
 // GET	/api/users	Retrieve all users (admin)
-interface User {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  image: string;
-  recipes: [];
-  pantry: [];
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const client = await clientPromise;
@@ -57,8 +47,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         firstName,
         lastName,
         image,
-        recipes: [],
-        pantry: [],
+        recipes: [] as Recipe[],
+        pantry: [] as PantryItem[],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
