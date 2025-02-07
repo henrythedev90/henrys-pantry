@@ -65,9 +65,9 @@
 
 1. Clone the repository:
 
-`git clone https://github.com/your-username/pantry-to-plate.git`
+`git clone https://github.com/your-username/henrys-pantry.git`
 
-`cd pantry-to-plate`
+`cd henrys-pantry`
 
 2. Install dependencies:
 
